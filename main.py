@@ -1,6 +1,6 @@
 import os
 import zulip
-from github import Github
+from github import Github, GithubException
 
 GITHUB_ACCOUNT = os.environ['GITHUB_ACCOUNT']
 
@@ -38,13 +38,14 @@ def create(msg):
         content = content + "**" + message['sender_full_name'] + "**: " + message['content'] + "<br>"
     content = content.replace("@", "[at]")
     repo_name = GITHUB_ACCOUNT + "/" + msg['content'].replace("@**issue** ", "")
-    repo = github.get_repo(repo_name)
-    if repo is None:
+    try:
+        repo = github.get_repo(repo_name)
+    except GithubException:
         zulip_client.send_message({
             "type": "stream",
             "to": stream,
             "topic": topic,
-            "content": "Repository does not exists.",
+            "content": "Repository " + repo_name + " does not exists.",
         })
         return
     issue = repo.create_issue(topic, content)
