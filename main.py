@@ -35,7 +35,7 @@ def create(msg):
     for message in resp['messages']:
         if '@issue' in message['content']:
             continue
-        content = content + "**" + message['sender_full_name'] + "**: " + message['content'] + "<br>"
+        content = content + "**" + message['sender_full_name'].split(" ")[0] + "**: " + message['content'] + "<br>"
     content = content.replace("@", "[at]")
     repo_name = GITHUB_ACCOUNT + "/" + msg['content'].replace("@**issue** ", "")
     try:
